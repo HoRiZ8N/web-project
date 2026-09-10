@@ -1,9 +1,9 @@
 # Shop MVC — Servlet/JSP/Tomcat/PostgreSQL
 
 ## Требования
-- JDK 17+
+- JDK 17+ (Tomcat 11 требует минимум 17)
 - Maven 3.9+
-- Tomcat 10.1+
+- Tomcat 11.0+
 - PostgreSQL 14+
 
 ## 1. База данных
