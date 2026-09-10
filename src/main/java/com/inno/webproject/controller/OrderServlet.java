@@ -1,7 +1,7 @@
-package com.shop.controller;
+package com.inno.webproject.controller;
 
-import com.shop.model.User;
-import com.shop.service.OrderService;
+import com.inno.webproject.model.User;
+import com.inno.webproject.service.OrderService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,7 +23,7 @@ public class OrderServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            req.setAttribute("orders", service.findByUser(user(req).getId()));
+            req.setAttribute("orders", service.findByUser(user(req).id()));
             req.getRequestDispatcher("/WEB-INF/views/orders.jsp").forward(req, resp);
         } catch (Exception e) {
             throw new ServletException(e);
@@ -37,13 +37,13 @@ public class OrderServlet extends HttpServlet {
             String action = req.getParameter("action");
             if ("create".equals(action)) {
                 service.create(
-                        u.getId(),
+                        u.id(),
                         Long.parseLong(req.getParameter("productId")),
                         Integer.parseInt(req.getParameter("quantity"))
                 );
             }
             if ("cancel".equals(action)) {
-                service.cancel(Long.parseLong(req.getParameter("id")), u.getId());
+                service.cancel(Long.parseLong(req.getParameter("id")), u.id());
             }
             resp.sendRedirect(req.getContextPath() + "/orders");
         } catch (Exception e) {

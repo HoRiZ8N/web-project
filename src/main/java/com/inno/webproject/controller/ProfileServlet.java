@@ -1,7 +1,7 @@
-package com.shop.controller;
+package com.inno.webproject.controller;
 
-import com.shop.dao.UserDao;
-import com.shop.model.User;
+import com.inno.webproject.dao.UserDao;
+import com.inno.webproject.model.User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,31 +11,25 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("/register")
-public class RegisterServlet extends HttpServlet {
+@WebServlet("/profile")
+public class ProfileServlet extends HttpServlet {
 
     private final UserDao dao = new UserDao();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/views/register.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String username = req.getParameter("username");
-            String password = req.getParameter("password");
+            User user = (User) req.getSession().getAttribute("user");
             String email = req.getParameter("email");
-
-            if (dao.findByUsername(username) != null) {
-                req.setAttribute("error", "Пользователь уже существует");
-                doGet(req, resp);
-                return;
-            }
-
-            dao.create(new User(username, password, email));
-            resp.sendRedirect(req.getContextPath() + "/login");
+            dao.updateEmail(user.id(), email);
+            User updated = new User(user.id(), user.username(), user.password(), email, user.role());
+            req.getSession().setAttribute("user", updated);
+            resp.sendRedirect(req.getContextPath() + "/profile");
         } catch (Exception e) {
             throw new ServletException(e);
         }

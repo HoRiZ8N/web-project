@@ -1,7 +1,7 @@
-package com.shop.controller;
+package com.inno.webproject.controller;
 
-import com.shop.dao.UserDao;
-import com.shop.model.User;
+import com.inno.webproject.dao.UserDao;
+import com.inno.webproject.model.User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -25,11 +25,11 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             User user = dao.findByUsername(req.getParameter("username"));
-            if (user != null && user.getPassword().equals(req.getParameter("password"))) {
+            if (user != null && user.password().equals(req.getParameter("password"))) {
                 req.getSession().setAttribute("user", user);
                 resp.sendRedirect(req.getContextPath() + "/products");
             } else {
-                req.setAttribute("error", "Неверный логин или пароль");
+                req.setAttribute("error", "Invalid username or password");
                 doGet(req, resp);
             }
         } catch (Exception e) {

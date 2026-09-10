@@ -1,7 +1,7 @@
-package com.shop.controller;
+package com.inno.webproject.controller;
 
-import com.shop.dao.ProductDao;
-import com.shop.model.User;
+import com.inno.webproject.dao.ProductDao;
+import com.inno.webproject.model.User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -34,7 +34,7 @@ public class ProductServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User u = user(req);
-        if (!"ADMIN".equals(u.getRole())) {
+        if (!"ADMIN".equals(u.role())) {
             resp.sendError(403);
             return;
         }

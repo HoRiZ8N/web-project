@@ -1,23 +1,34 @@
-package com.shop.util;
+package com.inno.webproject.util;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
 public class DatabaseConnection {
-    private static final HikariDataSource DATA_SOURCE;
 
-    static {
+    private static volatile HikariDataSource dataSource;
+
+    private DatabaseConnection() {
+    }
+
+    private static synchronized HikariDataSource getDataSource() throws DatabasePoolException {
+        if (dataSource != null) {
+            return dataSource;
+        }
+
         Properties p = new Properties();
         try (InputStream in = DatabaseConnection.class.getClassLoader().getResourceAsStream("db.properties")) {
-            if (in == null) throw new RuntimeException("db.properties not found");
+            if (in == null) {
+                throw new DatabasePoolException("db.properties not found");
+            }
             p.load(in);
-        } catch (Exception e) {
-            throw new RuntimeException("Database configuration error", e);
+        } catch (IOException e) {
+            throw new DatabasePoolException("Database configuration error", e);
         }
 
         HikariConfig config = new HikariConfig();
@@ -33,28 +44,22 @@ public class DatabaseConnection {
         config.setMaxLifetime(Long.parseLong(p.getProperty("db.pool.maxLifetimeMs", "1800000")));
         config.setPoolName("shop-db-pool");
 
-        DATA_SOURCE = new HikariDataSource(config);
+        try {
+            dataSource = new HikariDataSource(config);
+        } catch (Exception e) {
+            throw new DatabasePoolException("Failed to initialize the database connection pool", e);
+        }
+
+        return dataSource;
     }
 
-    private DatabaseConnection() {
+    public static Connection getConnection() throws SQLException, DatabasePoolException {
+        return getDataSource().getConnection();
     }
 
-    /**
-     * Берёт соединение из пула. Как и раньше, используется в DAO через
-     * try-with-resources — close() не закрывает физическое соединение,
-     * а возвращает его в пул.
-     */
-    public static Connection getConnection() throws SQLException {
-        return DATA_SOURCE.getConnection();
-    }
-
-    /**
-     * Вызывается при остановке приложения (см. AppLifecycleListener),
-     * чтобы корректно закрыть пул и все соединения в нём.
-     */
     public static void shutdown() {
-        if (DATA_SOURCE != null && !DATA_SOURCE.isClosed()) {
-            DATA_SOURCE.close();
+        if (dataSource != null && !dataSource.isClosed()) {
+            dataSource.close();
         }
     }
 }
