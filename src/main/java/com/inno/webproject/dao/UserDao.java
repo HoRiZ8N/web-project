@@ -2,7 +2,6 @@ package com.inno.webproject.dao;
 
 import com.inno.webproject.model.User;
 import com.inno.webproject.util.DatabaseConnection;
-import com.inno.webproject.util.DatabasePoolException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +17,7 @@ public class UserDao {
     private static final String SQL_UPDATE_EMAIL =
             "UPDATE users SET email = ? WHERE id = ?";
 
-    public User findByUsername(String username) throws SQLException, DatabasePoolException {
+    public User findByUsername(String username) throws SQLException {
         try (Connection c = DatabaseConnection.getConnection();
              PreparedStatement s = c.prepareStatement(SQL_FIND_BY_USERNAME)) {
             s.setString(1, username);
@@ -31,7 +30,7 @@ public class UserDao {
         }
     }
 
-    public void create(User u) throws SQLException, DatabasePoolException {
+    public void create(User u) throws SQLException {
         try (Connection c = DatabaseConnection.getConnection();
              PreparedStatement s = c.prepareStatement(SQL_INSERT_USER)) {
             s.setString(1, u.username());
@@ -41,7 +40,7 @@ public class UserDao {
         }
     }
 
-    public void updateEmail(long id, String email) throws SQLException, DatabasePoolException {
+    public void updateEmail(long id, String email) throws SQLException {
         try (Connection c = DatabaseConnection.getConnection();
              PreparedStatement s = c.prepareStatement(SQL_UPDATE_EMAIL)) {
             s.setString(1, email);

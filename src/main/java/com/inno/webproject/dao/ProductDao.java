@@ -2,7 +2,6 @@ package com.inno.webproject.dao;
 
 import com.inno.webproject.model.Product;
 import com.inno.webproject.util.DatabaseConnection;
-import com.inno.webproject.util.DatabasePoolException;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -23,7 +22,7 @@ public class ProductDao {
     private static final String SQL_DELETE_PRODUCT =
             "DELETE FROM products WHERE id = ?";
 
-    public List<Product> findAll() throws SQLException, DatabasePoolException {
+    public List<Product> findAll() throws SQLException {
         List<Product> result = new ArrayList<>();
         try (Connection c = DatabaseConnection.getConnection();
              PreparedStatement s = c.prepareStatement(SQL_FIND_ALL);
@@ -35,7 +34,7 @@ public class ProductDao {
         return result;
     }
 
-    public Product findById(long id) throws SQLException, DatabasePoolException {
+    public Product findById(long id) throws SQLException {
         try (Connection c = DatabaseConnection.getConnection();
              PreparedStatement s = c.prepareStatement(SQL_FIND_BY_ID)) {
             s.setLong(1, id);
@@ -48,7 +47,7 @@ public class ProductDao {
         }
     }
 
-    public void create(String name, String description, BigDecimal price, int quantity) throws SQLException, DatabasePoolException {
+    public void create(String name, String description, BigDecimal price, int quantity) throws SQLException {
         try (Connection c = DatabaseConnection.getConnection();
              PreparedStatement s = c.prepareStatement(SQL_INSERT_PRODUCT)) {
             s.setString(1, name);
@@ -59,7 +58,7 @@ public class ProductDao {
         }
     }
 
-    public void delete(long id) throws SQLException, DatabasePoolException {
+    public void delete(long id) throws SQLException {
         try (Connection c = DatabaseConnection.getConnection();
              PreparedStatement s = c.prepareStatement(SQL_DELETE_PRODUCT)) {
             s.setLong(1, id);

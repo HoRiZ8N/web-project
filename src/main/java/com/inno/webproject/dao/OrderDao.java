@@ -2,7 +2,6 @@ package com.inno.webproject.dao;
 
 import com.inno.webproject.model.Order;
 import com.inno.webproject.util.DatabaseConnection;
-import com.inno.webproject.util.DatabasePoolException;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -31,7 +30,7 @@ public class OrderDao {
     private static final String SQL_INCREASE_PRODUCT_QUANTITY =
             "UPDATE products SET quantity = quantity + ? WHERE id = ?";
 
-    public void create(long user, long product, int qty, BigDecimal total) throws SQLException, DatabasePoolException {
+    public void create(long user, long product, int qty, BigDecimal total) throws SQLException {
         try (Connection c = DatabaseConnection.getConnection()) {
             c.setAutoCommit(false);
 
@@ -62,7 +61,7 @@ public class OrderDao {
         }
     }
 
-    public List<Order> findByUser(long user) throws SQLException, DatabasePoolException {
+    public List<Order> findByUser(long user) throws SQLException {
         List<Order> result = new ArrayList<>();
         try (Connection c = DatabaseConnection.getConnection();
              PreparedStatement s = c.prepareStatement(SQL_FIND_ORDERS_BY_USER)) {
@@ -76,7 +75,7 @@ public class OrderDao {
         return result;
     }
 
-    public void cancel(long order, long user) throws SQLException, DatabasePoolException {
+    public void cancel(long order, long user) throws SQLException {
         try (Connection c = DatabaseConnection.getConnection()) {
             c.setAutoCommit(false);
 

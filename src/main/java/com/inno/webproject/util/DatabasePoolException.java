@@ -1,6 +1,8 @@
 package com.inno.webproject.util;
 
-public class DatabasePoolException extends Exception {
+import java.sql.SQLException;
+
+public class DatabasePoolException extends SQLException {
 
     public DatabasePoolException(String message) {
         super(message);
